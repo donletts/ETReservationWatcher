@@ -65,7 +65,7 @@ app.post ( "/", function (req, res) {
     request ( options, function (error, response) {
         if (error) throw new Error ( error );
         const queryResponseData = JSON.parse ( response.body );
-        res.write ( queryResponseData.date_label );
+        res.write ( "<p>" + queryResponseData.date_label + "</p>");
         res.write ( queryResponseData.event_list_html );
         res.send ();
     } );
