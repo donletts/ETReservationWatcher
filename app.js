@@ -6,11 +6,8 @@ const bodyParser = require ( "body-parser" );
 const app = express ();
 const port = 3000;
 
+app.set ( 'view engine', 'ejs' );
 app.use ( bodyParser.urlencoded ( {extended: true} ) );
-
-app.get ( "/", function (req, res) {
-    res.sendFile ( __dirname + "/index.html" );
-} );
 
 var options = {
     'method': 'POST',
@@ -57,6 +54,14 @@ var options = {
     }
 };
 
+var date_label = ""
+var event_list_html = ""
+
+app.get ( "/", function (req, res) {
+    // res.sendFile ( __dirname + "/index.html" );
+    res.render ( "list", {reservationSummary: date_label, event_list_html: event_list_html } );
+} );
+
 app.post ( "/", function (req, res) {
     var dateToWatch = req.body.dateToWatch.toString ();
     options.form["show_date"] = dateToWatch;
@@ -65,9 +70,9 @@ app.post ( "/", function (req, res) {
     request ( options, function (error, response) {
         if (error) throw new Error ( error );
         const queryResponseData = JSON.parse ( response.body );
-        res.write ( "<p>" + queryResponseData.date_label + "</p>");
-        res.write ( queryResponseData.event_list_html );
-        res.send ();
+        date_label = queryResponseData.date_label
+        event_list_html = queryResponseData.event_list_html
+        res.redirect ( "/" );
     } );
 } );
 

@@ -1,0 +1,14 @@
+<%- include('header'); -%>
+
+<form action="/" method="post">
+    <label for="dateInput">Date To Watch: </label>
+    <input id="dateInput" type="date" name="dateToWatch">
+    <button type="submit">Go</button>
+</form>
+
+<div class="reservations">
+    <h1> <%= reservationSummary %> </h1>
+    <%= event_list_html %>
+</div>
+
+<%- include('footer'); -%>
