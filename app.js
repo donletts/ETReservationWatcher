@@ -59,7 +59,7 @@ var event_list_html = ""
 
 app.get ( "/", function (req, res) {
     // res.sendFile ( __dirname + "/index.html" );
-    res.render ( "list", {reservationSummary: date_label, event_list_html: event_list_html } );
+    res.render ( "reservations", {reservationSummary: date_label, event_list_html: event_list_html } );
 } );
 
 app.post ( "/", function (req, res) {
