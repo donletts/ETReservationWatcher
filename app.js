@@ -54,27 +54,44 @@ var options = {
     }
 };
 
-var date_label = ""
-var event_list_html = ""
+var reservationData = {date_label: "", event_list_html: ""}
 
 app.get ( "/", function (req, res) {
     // res.sendFile ( __dirname + "/index.html" );
-    res.render ( "reservations", {reservationSummary: date_label, event_list_html: event_list_html } );
+    res.render ( "reservations", { reservationData: reservationData } );
 } );
+
 
 app.post ( "/", function (req, res) {
     var dateToWatch = req.body.dateToWatch.toString ();
+    reservationData = pingEarthTreks ( dateToWatch );
+    res.redirect ( "/" );
+} );
+
+
+function pingEarthTreks (dateToWatch) {
     options.form["show_date"] = dateToWatch;
     console.log ( dateToWatch );
+    var date_label = ""
+    var event_list_html = ""
 
     request ( options, function (error, response) {
         if (error) throw new Error ( error );
         const queryResponseData = JSON.parse ( response.body );
-        date_label = queryResponseData.date_label
-        event_list_html = queryResponseData.event_list_html
-        res.redirect ( "/" );
+        reservationData.date_label = queryResponseData.date_label
+        reservationData.event_list_html = queryResponseData.event_list_html
     } );
-} );
+}
+
+function checkForOpenSlots() {
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
+    console.log("check For Open Slots: " + dateTime);
+};
+
+setInterval(checkForOpenSlots, 5000);
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );

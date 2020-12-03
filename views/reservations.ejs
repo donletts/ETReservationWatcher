@@ -7,8 +7,10 @@
 </form>
 
 <div class="reservations">
-    <p> <%- reservationSummary %> </p>
-    <%- event_list_html %>
+    <% if (reservationData) { %>
+        <p> <%- reservationData.date_label %> </p>
+        <%- reservationData.event_list_html %>
+    <% } %>
 </div>
 
 <%- include('footer'); -%>
