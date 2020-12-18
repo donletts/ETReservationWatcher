@@ -54,8 +54,8 @@ var options = {
         'pcount-pid-1-2486129': '1',
         'pcount-pid-1-6955401': '0',
         'pcount-pid-1-6955402': '0',
-        'random': '5fc54d4820129',
-        'show_date': '2020-12-03'
+        'random': '5fc54d4820129'
+        // 'show_date': '2020-12-03'
     }
 };
 
@@ -93,45 +93,45 @@ const offering_guids = {
 
 function checkForOpenSlots () {
 
-    const form = new formData ();
-    form.append ( 'PreventChromeAutocomplete', '' );
-    form.append ( 'course_guid', '09111b41979d55cda993a87e569e08b2def30b84' );
-    form.append ( 'fctrl_1', 'offering_guid' );
-    form.append ( 'fctrl_2', 'course_guid' );
-    form.append ( 'fctrl_3', 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"] );
-    form.append ( 'fctrl_4', 'show_date' );
-    form.append ( 'fctrl_5', 'pcount-pid-1-2486129' );
-    form.append ( 'fctrl_6', 'pcount-pid-1-6955401' );
-    form.append ( 'fctrl_7', 'pcount-pid-1-6955402' );
-    form.append ( 'ftagname_0_pcount-pid-1-2486129', 'pcount' );
-    form.append ( 'ftagname_0_pcount-pid-1-6955401', 'pcount' );
-    form.append ( 'ftagname_0_pcount-pid-1-6955402', 'pcount' );
-    form.append ( 'ftagname_1_pcount-pid-1-2486129', 'pid' );
-    form.append ( 'ftagname_1_pcount-pid-1-6955401', 'pid' );
-    form.append ( 'ftagname_1_pcount-pid-1-6955402', 'pid' );
-    form.append ( 'ftagval_0_pcount-pid-1-2486129', '1' );
-    form.append ( 'ftagval_0_pcount-pid-1-6955401', '1' );
-    form.append ( 'ftagval_0_pcount-pid-1-6955402', '1' );
-    form.append ( 'ftagval_1_pcount-pid-1-2486129', '2486129' );
-    form.append ( 'ftagval_1_pcount-pid-1-6955401', '6955401' );
-    form.append ( 'ftagval_1_pcount-pid-1-6955402', '6955402' );
-    form.append ( 'iframeid', '' );
-    form.append ( 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"], '' );
-    form.append ( 'mode', 'p' );
-    form.append ( 'offering_guid', offering_guids["hamden"] );
-    form.append ( 'pcount-pid-1-2486129', '1' );
-    form.append ( 'pcount-pid-1-6955401', '0' );
-    form.append ( 'pcount-pid-1-6955402', '0' );
-    form.append ( 'random', '5fc54d4820129' );
+    // const form = new formData ();
+    // form.append ( 'PreventChromeAutocomplete', '' );
+    // form.append ( 'course_guid', '09111b41979d55cda993a87e569e08b2def30b84' );
+    // form.append ( 'fctrl_1', 'offering_guid' );
+    // form.append ( 'fctrl_2', 'course_guid' );
+    // form.append ( 'fctrl_3', 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"] );
+    // form.append ( 'fctrl_4', 'show_date' );
+    // form.append ( 'fctrl_5', 'pcount-pid-1-2486129' );
+    // form.append ( 'fctrl_6', 'pcount-pid-1-6955401' );
+    // form.append ( 'fctrl_7', 'pcount-pid-1-6955402' );
+    // form.append ( 'ftagname_0_pcount-pid-1-2486129', 'pcount' );
+    // form.append ( 'ftagname_0_pcount-pid-1-6955401', 'pcount' );
+    // form.append ( 'ftagname_0_pcount-pid-1-6955402', 'pcount' );
+    // form.append ( 'ftagname_1_pcount-pid-1-2486129', 'pid' );
+    // form.append ( 'ftagname_1_pcount-pid-1-6955401', 'pid' );
+    // form.append ( 'ftagname_1_pcount-pid-1-6955402', 'pid' );
+    // form.append ( 'ftagval_0_pcount-pid-1-2486129', '1' );
+    // form.append ( 'ftagval_0_pcount-pid-1-6955401', '1' );
+    // form.append ( 'ftagval_0_pcount-pid-1-6955402', '1' );
+    // form.append ( 'ftagval_1_pcount-pid-1-2486129', '2486129' );
+    // form.append ( 'ftagval_1_pcount-pid-1-6955401', '6955401' );
+    // form.append ( 'ftagval_1_pcount-pid-1-6955402', '6955402' );
+    // form.append ( 'iframeid', '' );
+    // form.append ( 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"], '' );
+    // form.append ( 'mode', 'p' );
+    // form.append ( 'offering_guid', offering_guids["hamden"] );
+    // form.append ( 'pcount-pid-1-2486129', '1' );
+    // form.append ( 'pcount-pid-1-6955401', '0' );
+    // form.append ( 'pcount-pid-1-6955402', '0' );
+    // form.append ( 'random', '5fc54d4820129' );
 
-    var header = {
-        'Accept': '*/*',
-        'DNT': '1',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36',
-        'Content-Type': ['application/x-www-form-urlencoded; charset=UTF-8', 'application/x-www-form-urlencoded'],
-        'Cookie': 'RGPSessionGUID=3866094825d0b3b49a03eaf4d85ce55c4462ee2199502fb8a3fd9678477d7b846a8ebf19b99a324d6821afb0d1563f91; BrowserSessionId=5fc54c9fd924b; RGPPortalSessionID=9m6rlpd0hplufem10esir286l1'
-    };
+    // var header = {
+    //     'Accept': '*/*',
+    //     'DNT': '1',
+    //     'X-Requested-With': 'XMLHttpRequest',
+    //     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36',
+    //     'Content-Type': ['application/x-www-form-urlencoded; charset=UTF-8', 'application/x-www-form-urlencoded'],
+    //     'Cookie': 'RGPSessionGUID=3866094825d0b3b49a03eaf4d85ce55c4462ee2199502fb8a3fd9678477d7b846a8ebf19b99a324d6821afb0d1563f91; BrowserSessionId=5fc54c9fd924b; RGPPortalSessionID=9m6rlpd0hplufem10esir286l1'
+    // };
 
     // form.submit({
     //     host: et_query_host,
@@ -145,7 +145,7 @@ function checkForOpenSlots () {
     let testData = {};
     (
         async () => {
-            testData = await getData ( et_query_url, header, form );
+            testData = await getData ( et_query_url );
 
             if (testData) {
                 const mailOptions = {
@@ -179,15 +179,20 @@ const noParens = (i, link) => {
     }
 };
 
-async function getData (et_query_url, header, form) {
+async function getData (et_query_url) {
     try {
-        
+
         const dates = dateHelper.getNextThreeDates();
-        dates.forEach((date, index) => {
-            form.append ( 'show_date', date );
+        const promises = dates.map(async (date, index) => {
+            options.form['show_date'] = date;
+
+            const form = new formData();
+            for(let key in options.form){
+                form.append(key, options.form[key])
+            }
             const response = await got.post ( et_query_url, {
                 body: form,
-                headers: header
+                headers: options['headers']
             } ).json ();
             console.log ( response );
             const $ = cheerio.load ( response["event_list_html"] );
@@ -200,10 +205,11 @@ async function getData (et_query_url, header, form) {
             $ ( 'td' ).filter ( noParens ).each ( (i, link) => {
                 // console.log(i + " " + link);
                 availability.push ( link.children[3].data.replace ( "spaces", "" ).trim () )
-            } );
+            } )
+            return {time_blocks: time_blocks, availability: availability};
         });
-
-        return {time_blocks: time_blocks, availability: availability};
+        const timeInfo = await Promise.all(promises);
+        return timeInfo;
         // console.log ( $ ( 'table' ) );
     } catch (error) {
         console.log ( error.response.body );
@@ -211,7 +217,7 @@ async function getData (et_query_url, header, form) {
     }
 }
 
-setInterval ( checkForOpenSlots, 5000 );
+setInterval ( checkForOpenSlots, 15000 );
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );
