@@ -6,6 +6,7 @@ const cheerio = require ( "cheerio" );
 const got = require ( "got" );
 const formData = require ( 'form-data' );
 const mailSender = require ( __dirname + "/sendEmail.js" );
+const dateHelper = require ( __dirname + "/date.js" );
 
 const app = express ();
 const port = 3000;
@@ -91,13 +92,6 @@ const offering_guids = {
 }
 
 function checkForOpenSlots () {
-    var today = new Date ();
-    var date = today.getFullYear () + '-' + (
-        today.getMonth () + 1
-    ) + '-' + today.getDate ();
-    var time = today.getHours () + ":" + today.getMinutes () + ":" + today.getSeconds ();
-    var dateTime = date + ' ' + time;
-    console.log ( "check For Open Slots: " + dateTime );
 
     const form = new formData ();
     form.append ( 'PreventChromeAutocomplete', '' );
@@ -129,7 +123,6 @@ function checkForOpenSlots () {
     form.append ( 'pcount-pid-1-6955401', '0' );
     form.append ( 'pcount-pid-1-6955402', '0' );
     form.append ( 'random', '5fc54d4820129' );
-    form.append ( 'show_date', '2020-12-18' );
 
     var header = {
         'Accept': '*/*',
@@ -153,6 +146,7 @@ function checkForOpenSlots () {
     (
         async () => {
             testData = await getData ( et_query_url, header, form );
+
             if (testData) {
                 const mailOptions = {
                     from: 'Don Letts 🧗‍♂️<don.letts@gmail.com>',
@@ -187,22 +181,28 @@ const noParens = (i, link) => {
 
 async function getData (et_query_url, header, form) {
     try {
-        const response = await got.post ( et_query_url, {
-            body: form,
-            headers: header
-        } ).json ();
-        console.log ( response );
-        const $ = cheerio.load ( response["event_list_html"] );
-        const time_blocks = [];
-        const availability = [];
+        
+        const dates = dateHelper.getNextThreeDates();
+        dates.forEach((date, index) => {
+            form.append ( 'show_date', date );
+            const response = await got.post ( et_query_url, {
+                body: form,
+                headers: header
+            } ).json ();
+            console.log ( response );
+            const $ = cheerio.load ( response["event_list_html"] );
+            const time_blocks = [];
+            const availability = [];
 
-        $ ( '#offering-page-select-events-table .offering-page-schedule-list-time-column' ).each ( function () {
-            time_blocks.push ( $ ( this ).text ().trim () );
-        } );
-        $ ( 'td' ).filter ( noParens ).each ( (i, link) => {
-            // console.log(i + " " + link);
-            availability.push ( link.children[3].data.replace ( "spaces", "" ).trim () )
-        } );
+            $ ( '#offering-page-select-events-table .offering-page-schedule-list-time-column' ).each ( function () {
+                time_blocks.push ( $ ( this ).text ().trim () );
+            } );
+            $ ( 'td' ).filter ( noParens ).each ( (i, link) => {
+                // console.log(i + " " + link);
+                availability.push ( link.children[3].data.replace ( "spaces", "" ).trim () )
+            } );
+        });
+
         return {time_blocks: time_blocks, availability: availability};
         // console.log ( $ ( 'table' ) );
     } catch (error) {
