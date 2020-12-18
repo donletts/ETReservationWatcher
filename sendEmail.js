@@ -56,8 +56,8 @@ const mailOptions = {
     subject: 'hello from gmail',
     text: 'hello from gmail'
 }
-const credentials = getCredentials ( 'secrets/credentials.json', 'secrets/token.json' );
-const oAuth2Client = setupAuth(credentials);
-sendMail ( mailOptions, credentials, oAuth2Client)
-    .then ( (result) => console.log ( 'Email sent ... ', result ) )
-    .catch ( (error) => console.log ( error.message ) )
+// const credentials = exports.getCredentials ( 'secrets/credentials.json', 'secrets/token.json' );
+// const oAuth2Client = exports.setupAuth ( credentials );
+// exports.sendMail ( mailOptions, credentials, oAuth2Client )
+//     .then ( (result) => console.log ( 'Email sent ... ', result ) )
+//     .catch ( (error) => console.log ( error.message ) )

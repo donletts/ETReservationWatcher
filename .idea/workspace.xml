@@ -4,7 +4,7 @@
     <list default="true" id="542135d9-874e-419f-94f7-64c6e05487a8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testEmail.js" beforeDir="false" afterPath="$PROJECT_DIR$/testEmail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sendEmail.js" beforeDir="false" afterPath="$PROJECT_DIR$/sendEmail.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,16 +41,24 @@
       <recent name="C:\Users\Don\OneDrive\Documents\repos\Udemy-CompleteWebDevBootcamp\ETReservationWatcher\secrets" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.sendEmail.js">
+  <component name="RunManager" selected="Node.js.app.js">
     <configuration default="true" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="9229" restartOnDisconnect="true">
       <method v="2" />
     </configuration>
     <configuration name="inspect nodemon" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="9229">
       <method v="2" />
     </configuration>
-    <configuration name="sendEmail.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/sendEmail.js" working-dir="$PROJECT_DIR$">
+    <configuration name="app.js" type="NodeJSConfigurationType" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
+    <configuration name="sendEmail.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="sendEmail.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Attach to Node.js/Chrome.inspect nodemon" />
+      <item itemvalue="Node.js.app.js" />
+      <item itemvalue="Node.js.sendEmail.js" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Node.js.sendEmail.js" />
@@ -66,7 +74,7 @@
       <option name="presentableId" value="Default" />
       <updated>1606920184852</updated>
       <workItem from="1606920185913" duration="23058000" />
-      <workItem from="1607644159497" duration="47508000" />
+      <workItem from="1607644159497" duration="49598000" />
     </task>
     <servers />
   </component>
@@ -78,9 +86,9 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app.js</url>
-          <line>359</line>
+          <line>164</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="28" />
+          <option name="timeStamp" value="47" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

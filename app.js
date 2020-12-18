@@ -5,11 +5,7 @@ const bodyParser = require ( "body-parser" );
 const cheerio = require ( "cheerio" );
 const got = require ( "got" );
 const formData = require ( 'form-data' );
-const nodemailer = require ( 'nodemailer' );
-const fs = require('fs');
-const readline = require('readline');
-const {google} = require('googleapis');
-const date = require ( __dirname + "/sendEmail.js" );
+const mailSender = require ( __dirname + "/sendEmail.js" );
 
 const app = express ();
 const port = 3000;
@@ -64,19 +60,6 @@ var options = {
 
 var reservationData = {date_label: "", event_list_html: ""}
 
-// If modifying these scopes, delete token.json.
-const SCOPES = [
-    'https://mail.google.com/',
-    'https://www.googleapis.com/auth/gmail.modify',
-    'https://www.googleapis.com/auth/gmail.compose',
-    'https://www.googleapis.com/auth/gmail.send'
-];
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
-const TOKEN_PATH = 'secrets/token.json';
-
-
 app.get ( "/", function (req, res) {
     // res.sendFile ( __dirname + "/index.html" );
     res.render ( "reservations", {reservationData: reservationData} );
@@ -92,8 +75,6 @@ app.post ( "/", function (req, res) {
 function pingEarthTreks (dateToWatch, res) {
     options.form["show_date"] = dateToWatch;
     console.log ( dateToWatch );
-    var date_label = ""
-    var event_list_html = ""
 
     request ( options, function (error, response) {
         if (error) throw new Error ( error );
@@ -148,7 +129,7 @@ function checkForOpenSlots () {
     form.append ( 'pcount-pid-1-6955401', '0' );
     form.append ( 'pcount-pid-1-6955402', '0' );
     form.append ( 'random', '5fc54d4820129' );
-    form.append ( 'show_date', '2020-12-14' );
+    form.append ( 'show_date', '2020-12-18' );
 
     var header = {
         'Accept': '*/*',
@@ -173,36 +154,17 @@ function checkForOpenSlots () {
         async () => {
             testData = await getData ( et_query_url, header, form );
             if (testData) {
-                // mailtrap
-                // let transport = nodemailer.createTransport ( {
-                //     host: "smtp.mailtrap.io",
-                //     port: 2525,
-                //     auth: {
-                //         user: "00846f5dc2cf4b",
-                //         pass: "eaa41902429013"
-                //     }
-                // } );
-                //now lets do it with gmail
-
-                // const message = {
-                //     from: 'elonmusk@tesla.com', // Sender address
-                //     to: 'don.letts@gmail.com',         // List of recipients
-                //     subject: 'Design Your Model S | Tesla', // Subject line
-                //     text: 'Have the most fun you can in a car. Get your Tesla today!' // Plain text body
-                // };
-                // transport.sendMail(message, function(err, info) {
-                //     if (err) {
-                //         console.log(err)
-                //     } else {
-                //         console.log(info);
-                //     }
-                // });
-                // Load client secrets from a local file.
-                fs.readFile('secrets/credentials.json', (err, content) => {
-                    if (err) return console.log('Error loading client secret file:', err);
-                    // Authorize a client with credentials, then call the Gmail API.
-                    authorize(JSON.parse(content), sendEmail);
-                });
+                const mailOptions = {
+                    from: 'Don Letts 🧗‍♂️<don.letts@gmail.com>',
+                    to: 'don.letts@gmail.com',
+                    subject: 'hello from gmail',
+                    text: 'hello from gmail'
+                }
+                const credentials = mailSender.getCredentials ( 'secrets/credentials.json', 'secrets/token.json' );
+                const oAuth2Client = mailSender.setupAuth ( credentials );
+                mailSender.sendMail ( mailOptions, credentials, oAuth2Client )
+                    .then ( (result) => console.log ( 'Email sent ... ', result ) )
+                    .catch ( (error) => console.log ( error.message ) )
             }
         }
     ) ();
@@ -248,120 +210,6 @@ async function getData (et_query_url, header, form) {
         return {};
     }
 }
-
-
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
-function authorize(credentials, callback) {
-    const {client_secret, client_id, redirect_uris} = credentials.web;
-    const oAuth2Client = new google.auth.OAuth2(
-        client_id, client_secret, redirect_uris[0]);
-
-    // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, (err, token) => {
-        if (err) return getNewToken(oAuth2Client, callback);
-        tokens = JSON.parse(token)
-        oAuth2Client.setCredentials(tokens);
-        callback(oAuth2Client, tokens, credentials);
-    });
-}
-
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
-function getNewToken(oAuth2Client, callback) {
-    const authUrl = oAuth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: SCOPES,
-    });
-    console.log('Authorize this app by visiting this url:', authUrl);
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-    rl.question('Enter the code from that page here: ', (code) => {
-        rl.close();
-        oAuth2Client.getToken(code, (err, token) => {
-            if (err) return console.error('Error retrieving access token', err);
-            oAuth2Client.setCredentials(token);
-            // Store the token to disk for later program executions
-            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-                if (err) return console.error(err);
-                console.log('Token stored to', TOKEN_PATH);
-            });
-            callback(oAuth2Client, tokens, credentials);
-        });
-    });
-}
-
-/**
- * Lists the labels in the user's account.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function listLabels(auth) {
-    const gmail = google.gmail({version: 'v1', auth});
-    gmail.users.labels.list({
-        userId: 'me',
-    }, (err, res) => {
-        if (err) return console.log('The API returned an error: ' + err);
-        const labels = res.data.labels;
-        if (labels.length) {
-            console.log('Labels:');
-            labels.forEach((label) => {
-                console.log(`- ${label.name}`);
-            });
-        } else {
-            console.log('No labels found.');
-        }
-    });
-}
-
-/**
- * Lists the labels in the user's account.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function sendEmail (auth, tokens, credentials) {
-    const {client_secret, client_id} = credentials.web;
-    const {refresh_token} = tokens
-    const accessToken = auth.getAccessToken();
-    const transporter = nodemailer.createTransport ( {
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            type: 'OAuth2',
-            user: 'don.letts@gmail.com',
-            clientId: client_id,
-            clientSecret: client_secret,
-            refreshToken: refresh_token,
-            accessToken: accessToken,
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    } );
-    const mailOptions = {
-        from: 'don.letts@gmail.com',
-        to: 'don.letts@gmail.com',
-        subject: 'Message',
-        text: 'I hope this message gets through!'
-    };
-
-    transporter.sendMail(mailOptions, (error, response) => {
-        error ? console.log(error) : console.log(response);
-        transporter.close();
-    });
-}
-
 
 setInterval ( checkForOpenSlots, 5000 );
 
