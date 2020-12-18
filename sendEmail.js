@@ -3,7 +3,7 @@ const {google} = require ( 'googleapis' )
 const fs = require ( 'fs' );
 
 
-function getCredentials (credential_file, token_file) {
+exports.getCredentials = function (credential_file, token_file) {
     const content1 = fs.readFileSync ( credential_file )
     const credentials = JSON.parse ( content1 );
     const {client_secret, client_id, redirect_uris} = credentials.web;
@@ -13,7 +13,7 @@ function getCredentials (credential_file, token_file) {
     return {refresh_token, client_secret, client_id, redirect_uris};
 }
 
-function setupAuth (credentials) {
+exports.setupAuth = function (credentials) {
     const {
         refresh_token, client_secret, client_id, redirect_uris
     } = credentials;
@@ -26,7 +26,7 @@ function setupAuth (credentials) {
     return oAuth2Client;
 }
 
-async function sendMail (mailOptions, credentials, oAuth2Client) {
+exports.sendMail = async function (mailOptions, credentials, oAuth2Client) {
     const {
         refresh_token, client_secret, client_id
     } = credentials;
