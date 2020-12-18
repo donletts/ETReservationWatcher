@@ -11,6 +11,12 @@ https://developers.google.com/oauthplayground
 - copy refresh token
 - redirect uri is oauthplayground
 
+In the 'secrets' folder, we expect a 'credentials.json' and a 'token.json'
+
+- in credentials we need (client_id, client_secret and redirect_uris)
+- in token we just care about refresh_token
+- access token is grabbed on the fly from the refresh token
+
 Taken from this tutorial
 
 Sending Emails with Node.js Using SMTP, Gmail, and OAuth2
