@@ -1,10 +1,10 @@
 const express = require ( "express" );
 const request = require ( "request" );
-// const https = require("https");
 const bodyParser = require ( "body-parser" );
 const cheerio = require ( "cheerio" );
 const got = require ( "got" );
 const formData = require ( 'form-data' );
+const ejs = require ( 'ejs' );
 const mailSender = require ( __dirname + "/sendEmail.js" );
 const dateHelper = require ( __dirname + "/date.js" );
 
@@ -13,6 +13,11 @@ const port = 3000;
 
 app.set ( 'view engine', 'ejs' );
 app.use ( bodyParser.urlencoded ( {extended: true} ) );
+
+const offering_guids = {
+    golden: "dbcd095c957c4e309dde5c28461036f7",
+    hamden: "503c88b01d36493790767d49703a01c0"
+}
 
 var options = {
     'method': 'POST',
@@ -30,7 +35,7 @@ var options = {
         'course_guid': '09111b41979d55cda993a87e569e08b2def30b84',
         'fctrl_1': 'offering_guid',
         'fctrl_2': 'course_guid',
-        'fctrl_3': 'limited_to_course_guid_for_offering_guid_dbcd095c957c4e309dde5c28461036f7',
+        'fctrl_3': 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"],
         'fctrl_4': 'show_date',
         'fctrl_5': 'pcount-pid-1-2486129',
         'fctrl_6': 'pcount-pid-1-6955401',
@@ -48,14 +53,13 @@ var options = {
         'ftagval_1_pcount-pid-1-6955401': '6955401',
         'ftagval_1_pcount-pid-1-6955402': '6955402',
         'iframeid': '',
-        'limited_to_course_guid_for_offering_guid_dbcd095c957c4e309dde5c28461036f7': '',
+        ['limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"]]: '',
         'mode': 'p',
-        'offering_guid': 'dbcd095c957c4e309dde5c28461036f7',
+        'offering_guid': offering_guids["hamden"],
         'pcount-pid-1-2486129': '1',
         'pcount-pid-1-6955401': '0',
         'pcount-pid-1-6955402': '0',
         'random': '5fc54d4820129'
-        // 'show_date': '2020-12-03'
     }
 };
 
@@ -86,73 +90,25 @@ function pingEarthTreks (dateToWatch, res) {
     } );
 }
 
-const offering_guids = {
-    golden: "dbcd095c957c4e309dde5c28461036f7",
-    hamden: "503c88b01d36493790767d49703a01c0"
-}
-
 function checkForOpenSlots () {
 
-    // const form = new formData ();
-    // form.append ( 'PreventChromeAutocomplete', '' );
-    // form.append ( 'course_guid', '09111b41979d55cda993a87e569e08b2def30b84' );
-    // form.append ( 'fctrl_1', 'offering_guid' );
-    // form.append ( 'fctrl_2', 'course_guid' );
-    // form.append ( 'fctrl_3', 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"] );
-    // form.append ( 'fctrl_4', 'show_date' );
-    // form.append ( 'fctrl_5', 'pcount-pid-1-2486129' );
-    // form.append ( 'fctrl_6', 'pcount-pid-1-6955401' );
-    // form.append ( 'fctrl_7', 'pcount-pid-1-6955402' );
-    // form.append ( 'ftagname_0_pcount-pid-1-2486129', 'pcount' );
-    // form.append ( 'ftagname_0_pcount-pid-1-6955401', 'pcount' );
-    // form.append ( 'ftagname_0_pcount-pid-1-6955402', 'pcount' );
-    // form.append ( 'ftagname_1_pcount-pid-1-2486129', 'pid' );
-    // form.append ( 'ftagname_1_pcount-pid-1-6955401', 'pid' );
-    // form.append ( 'ftagname_1_pcount-pid-1-6955402', 'pid' );
-    // form.append ( 'ftagval_0_pcount-pid-1-2486129', '1' );
-    // form.append ( 'ftagval_0_pcount-pid-1-6955401', '1' );
-    // form.append ( 'ftagval_0_pcount-pid-1-6955402', '1' );
-    // form.append ( 'ftagval_1_pcount-pid-1-2486129', '2486129' );
-    // form.append ( 'ftagval_1_pcount-pid-1-6955401', '6955401' );
-    // form.append ( 'ftagval_1_pcount-pid-1-6955402', '6955402' );
-    // form.append ( 'iframeid', '' );
-    // form.append ( 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"], '' );
-    // form.append ( 'mode', 'p' );
-    // form.append ( 'offering_guid', offering_guids["hamden"] );
-    // form.append ( 'pcount-pid-1-2486129', '1' );
-    // form.append ( 'pcount-pid-1-6955401', '0' );
-    // form.append ( 'pcount-pid-1-6955402', '0' );
-    // form.append ( 'random', '5fc54d4820129' );
-
-    // var header = {
-    //     'Accept': '*/*',
-    //     'DNT': '1',
-    //     'X-Requested-With': 'XMLHttpRequest',
-    //     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36',
-    //     'Content-Type': ['application/x-www-form-urlencoded; charset=UTF-8', 'application/x-www-form-urlencoded'],
-    //     'Cookie': 'RGPSessionGUID=3866094825d0b3b49a03eaf4d85ce55c4462ee2199502fb8a3fd9678477d7b846a8ebf19b99a324d6821afb0d1563f91; BrowserSessionId=5fc54c9fd924b; RGPPortalSessionID=9m6rlpd0hplufem10esir286l1'
-    // };
-
-    // form.submit({
-    //     host: et_query_host,
-    //     path: et_query_path,
-    //     headers: header
-    // }, function(err, res) {
-    //     console.log(res.statusCode);
-    // });
     const et_query_url = 'https://app.rockgympro.com/b/widget/?a=equery';
 
     let testData = {};
     (
-        async () => {
+        async _ => {
             testData = await getData ( et_query_url );
 
             if (testData) {
+
+                filePath = __dirname + '/views/availability.ejs';
+                availabilityString = await ejs.renderFile ( filePath, {availability: testData} );
+
                 const mailOptions = {
                     from: 'Don Letts 🧗‍♂️<don.letts@gmail.com>',
                     to: 'don.letts@gmail.com',
-                    subject: 'hello from gmail',
-                    text: 'hello from gmail'
+                    subject: 'Current 3 Day ET Availability',
+                    text: availabilityString
                 }
                 const credentials = mailSender.getCredentials ( 'secrets/credentials.json', 'secrets/token.json' );
                 const oAuth2Client = mailSender.setupAuth ( credentials );
@@ -168,49 +124,68 @@ const noParens = (i, link) => {
     // Regular expression to determine if the text has parentheses.
     // const parensRegex = /^((?!\().)*$/;
     // return parensRegex.test(link.children[0].data);
-    if (link.children
-        && link.children.length > 1
-        && link.children[1].children
-        && link.children[1].children.length >= 1
-        && link.children[1].children[0].data == "Availability") {
-        return true;
-    } else {
-        return false;
+    try {
+        if (link.children
+            && link.children.length > 1
+            && link.children[1].children
+            && link.children[1].children.length > 0
+            && link.children[1].children[0].data
+            && link.children[1].children[0].data == "Availability"
+            && link.children.length > 3
+            && link.children[3].data.includes("spaces")
+            && !(link.children[3].children
+                && link.children[3].children.length > 0
+                && link.children[3].children[0].data
+                && !link.children[3].children[0].data.includes ( "Full" ))
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (e) {
+        console.log ( e );
     }
 };
 
 async function getData (et_query_url) {
     try {
+        const time_blocks = [];
+        const dayAvailability = {};
+        const totalAvailability = {};
+        const dates = dateHelper.getNextThreeDates ();
+        for (let date of dates) {
 
-        const dates = dateHelper.getNextThreeDates();
-        const promises = dates.map(async (date, index) => {
-            options.form['show_date'] = date;
-
-            const form = new formData();
-            for(let key in options.form){
-                form.append(key, options.form[key])
+            const form = new formData ();
+            for (let key in options.form) {
+                form.append ( key, options.form[key] )
             }
+            form.append('show_date', date);
+
+            // form.submit({
+            //     host: et_query_host,
+            //     path: et_query_path,
+            //     headers: header
+            // }, function(err, res) {
+            //     console.log(res.statusCode);
+            // });
             const response = await got.post ( et_query_url, {
                 body: form,
                 headers: options['headers']
             } ).json ();
-            console.log ( response );
+            // console.log ( response );
             const $ = cheerio.load ( response["event_list_html"] );
-            const time_blocks = [];
-            const availability = [];
 
             $ ( '#offering-page-select-events-table .offering-page-schedule-list-time-column' ).each ( function () {
                 time_blocks.push ( $ ( this ).text ().trim () );
             } );
             $ ( 'td' ).filter ( noParens ).each ( (i, link) => {
-                // console.log(i + " " + link);
-                availability.push ( link.children[3].data.replace ( "spaces", "" ).trim () )
+                dayAvailability[time_blocks[i]] = link.children[3].data.replace ( "spaces", "" ).trim ()
             } )
-            return {time_blocks: time_blocks, availability: availability};
-        });
-        const timeInfo = await Promise.all(promises);
-        return timeInfo;
-        // console.log ( $ ( 'table' ) );
+            if ( dayAvailability.length > 0 ){
+                totalAvailability[date] = dayAvailability;
+            }
+        }
+        return totalAvailability;
     } catch (error) {
         console.log ( error.response.body );
         return {};

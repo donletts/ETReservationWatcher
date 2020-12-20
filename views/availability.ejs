@@ -1,0 +1,6 @@
+<% for(let day in availability) { %>
+    Availability For Day: <%- day %>
+    <% for(let time_slot in availability[day]) { %>
+        - <%- time_slot %> -> <%- availability[day][time_slot] %>
+    <% } %>
+<% } %>
