@@ -30,12 +30,12 @@ var options = {
         'Content-Type': ['application/x-www-form-urlencoded; charset=UTF-8', 'application/x-www-form-urlencoded'],
         'Cookie': 'RGPSessionGUID=3866094825d0b3b49a03eaf4d85ce55c4462ee2199502fb8a3fd9678477d7b846a8ebf19b99a324d6821afb0d1563f91; BrowserSessionId=5fc54c9fd924b; RGPPortalSessionID=9m6rlpd0hplufem10esir286l1'
     },
-form: {
+    form: {
         'PreventChromeAutocomplete': '',
         'course_guid': '503c88b01d36493790767d49703a01c0',
         'fctrl_1': 'offering_guid',
         'fctrl_2': 'course_guid',
-        'fctrl_3': 'limited_to_course_guid_for_offering_guid_' + offering_guids['hamden'],
+        'fctrl_3': 'limited_to_course_guid_for_offering_guid_' + offering_guids['golden'],
         'fctrl_4': 'show_date',
         'fctrl_5': 'pcount-pid-1-2486129',
         'fctrl_6': 'pcount-pid-1-6955401',
@@ -53,9 +53,9 @@ form: {
         'ftagval_1_pcount-pid-1-6955401': '6955401',
         'ftagval_1_pcount-pid-1-6955402': '6955402',
         'iframeid': '',
-        ['limited_to_course_guid_for_offering_guid_' + offering_guids['hamden']]: '',
+        ['limited_to_course_guid_for_offering_guid_' + offering_guids['golden']]: '',
         'mode': 'p',
-        'offering_guid': offering_guids['hamden'],
+        'offering_guid': offering_guids['golden'],
         'pcount-pid-1-2486129': '1',
         'pcount-pid-1-6955401': '0',
         'pcount-pid-1-6955402': '0',
@@ -66,7 +66,6 @@ form: {
 var reservationData = {date_label: "", event_list_html: ""}
 
 app.get ( "/", function (req, res) {
-    // res.sendFile ( __dirname + "/index.html" );
     res.render ( "reservations", {reservationData: reservationData} );
 } );
 
@@ -98,14 +97,14 @@ function checkForOpenSlots () {
         async _ => {
             let testData = await getData ( et_query_url );
 
-            if (testData) {
+            if (Object.entries ( testData ).length > 0) {
 
                 filePath = __dirname + '/views/availability.ejs';
                 availabilityString = await ejs.renderFile ( filePath, {availability: testData} );
 
                 const mailOptions = {
                     from: 'Don Letts 🧗‍♂️<don.letts@gmail.com>',
-                    to: 'don.letts@gmail.com',
+                    to: 'don.letts@gmail.com, lisa.haisfield@gmail.com',
                     subject: 'Current 3 Day ET Availability',
                     text: availabilityString
                 }
@@ -119,10 +118,24 @@ function checkForOpenSlots () {
     ) ();
 };
 
-const noParens = (i, link) => {
-    // Regular expression to determine if the text has parentheses.
-    // const parensRegex = /^((?!\().)*$/;
-    // return parensRegex.test(link.children[0].data);
+const isNotAvailabileYet = (i, link) => {
+    try {
+        if (link.children
+            && link.children.length > 2
+            && link.children[1].children
+            && link.children[1].children.length > 0
+            && link.children[1].children[0].data
+            && link.children[1].children[0].data.includes ( "NOT" )) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (e) {
+        console.log ( e );
+    }
+}
+
+const isAvailabilityTable = (i, link) => {
     try {
         if (link.children
             && link.children.length > 1
@@ -137,7 +150,7 @@ const noParens = (i, link) => {
                 link.children[3].children
                 && link.children[3].children.length > 0
                 && link.children[3].children[0].data
-                && !link.children[3].children[0].data.includes ( "Full" )
+                && link.children[3].children[0].data.includes ( "Full" )
             )
         ) {
             return true;
@@ -152,20 +165,17 @@ const noParens = (i, link) => {
 async function getData (et_query_url) {
     try {
         const time_blocks = {};
-        const dayAvailability = {};
         const totalAvailability = {};
         const dates = dateHelper.getNextThreeDates ();
         for (let date of dates) {
-
             let formInfo = {...options.form};
             formInfo['show_date'] = date;
 
-            // const form = new formData (formInfo);
             const form = new formData ();
             for (let key in formInfo) {
                 form.append ( key, formInfo[key] )
             }
-            // form.append('show_date', date);
+
             const response = await got.post ( et_query_url, {
                 body: form,
                 headers: options['headers']
@@ -173,21 +183,37 @@ async function getData (et_query_url) {
             const $ = cheerio.load ( response["event_list_html"] );
 
             $ ( '#offering-page-select-events-table .offering-page-schedule-list-time-column' ).each ( function () {
-                if(!time_blocks[date]){
+                if (!time_blocks[date]) {
                     time_blocks[date] = [];
                 }
                 time_blocks[date].push ( $ ( this ).text ().trim () );
             } );
-            $ ( 'td' ).filter ( noParens ).each ( (i, link) => {
-                if(!totalAvailability[date]){
+            $ ( 'td' ).filter ( isAvailabilityTable ).each ( (i, link) => {
+                if (!totalAvailability[date]) {
                     totalAvailability[date] = {};
                 }
                 totalAvailability[date][time_blocks[date][i]] = link.children[3].data.replace ( "spaces", "" ).trim ()
             } )
-            // if (Object.keys(dayAvailability).length !== 0) {
-            //     totalAvailability[date] = dayAvailability;
-            // }
+            $ ( 'td' ).filter ( isNotAvailabileYet ).each ( (i, link) => {
+                if (totalAvailability[date]
+                    && time_blocks[date]
+                    && time_blocks[date][i]
+                    && totalAvailability[date][time_blocks[date][i]]
+                ) {
+                    delete totalAvailability[date][time_blocks[date][i]];
+                }
+            } )
         }
+
+        //clean out garbage entries
+        if (Object.entries ( totalAvailability ).length > 0) {
+            for (let element in totalAvailability) {
+                if (Object.entries ( totalAvailability[element] ).length == 0) {
+                    delete totalAvailability[element];
+                }
+            }
+        }
+
         return totalAvailability;
     } catch (error) {
         console.log ( error.response.body );
@@ -195,7 +221,8 @@ async function getData (et_query_url) {
     }
 }
 
-setInterval ( checkForOpenSlots, 30000 );
+// checkForOpenSlots every 5 minutes (5 * 60 * 1000 = 300000 milliseconds)
+setInterval ( checkForOpenSlots, 300000 );
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );

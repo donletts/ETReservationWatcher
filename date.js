@@ -8,7 +8,7 @@ exports.getNextThreeDates = function () {
     let dates = []
     const today = new Date ();
 
-    for (let i = 1; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         let futureDay = today.addDays(i);
         let formattedDate = futureDay.getFullYear () + '-' + (
             futureDay.getMonth () + 1
