@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="542135d9-874e-419f-94f7-64c6e05487a8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/views/availability.ejs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sendEmail.js" beforeDir="false" afterPath="$PROJECT_DIR$/sendEmail.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +76,7 @@
       <option name="presentableId" value="Default" />
       <updated>1606920184852</updated>
       <workItem from="1606920185913" duration="23058000" />
-      <workItem from="1607644159497" duration="65708000" />
+      <workItem from="1607644159497" duration="77437000" />
     </task>
     <servers />
   </component>
@@ -90,33 +88,15 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app.js</url>
-          <line>145</line>
+          <line>192</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="65" />
+          <option name="timeStamp" value="88" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app.js</url>
-          <line>106</line>
+          <line>147</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="77" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app.js</url>
-          <line>187</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="81" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app.js</url>
-          <line>158</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="82" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app.js</url>
-          <line>175</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="83" />
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

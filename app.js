@@ -15,8 +15,8 @@ app.set ( 'view engine', 'ejs' );
 app.use ( bodyParser.urlencoded ( {extended: true} ) );
 
 const offering_guids = {
-    golden: "dbcd095c957c4e309dde5c28461036f7",
-    hamden: "503c88b01d36493790767d49703a01c0"
+    golden: 'dbcd095c957c4e309dde5c28461036f7',
+    hamden: '503c88b01d36493790767d49703a01c0'
 }
 
 var options = {
@@ -30,12 +30,12 @@ var options = {
         'Content-Type': ['application/x-www-form-urlencoded; charset=UTF-8', 'application/x-www-form-urlencoded'],
         'Cookie': 'RGPSessionGUID=3866094825d0b3b49a03eaf4d85ce55c4462ee2199502fb8a3fd9678477d7b846a8ebf19b99a324d6821afb0d1563f91; BrowserSessionId=5fc54c9fd924b; RGPPortalSessionID=9m6rlpd0hplufem10esir286l1'
     },
-    form: {
+form: {
         'PreventChromeAutocomplete': '',
-        'course_guid': '09111b41979d55cda993a87e569e08b2def30b84',
+        'course_guid': '503c88b01d36493790767d49703a01c0',
         'fctrl_1': 'offering_guid',
         'fctrl_2': 'course_guid',
-        'fctrl_3': 'limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"],
+        'fctrl_3': 'limited_to_course_guid_for_offering_guid_' + offering_guids['hamden'],
         'fctrl_4': 'show_date',
         'fctrl_5': 'pcount-pid-1-2486129',
         'fctrl_6': 'pcount-pid-1-6955401',
@@ -53,9 +53,9 @@ var options = {
         'ftagval_1_pcount-pid-1-6955401': '6955401',
         'ftagval_1_pcount-pid-1-6955402': '6955402',
         'iframeid': '',
-        ['limited_to_course_guid_for_offering_guid_' + offering_guids["hamden"]]: '',
+        ['limited_to_course_guid_for_offering_guid_' + offering_guids['hamden']]: '',
         'mode': 'p',
-        'offering_guid': offering_guids["hamden"],
+        'offering_guid': offering_guids['hamden'],
         'pcount-pid-1-2486129': '1',
         'pcount-pid-1-6955401': '0',
         'pcount-pid-1-6955402': '0',
@@ -94,10 +94,9 @@ function checkForOpenSlots () {
 
     const et_query_url = 'https://app.rockgympro.com/b/widget/?a=equery';
 
-    let testData = {};
     (
         async _ => {
-            testData = await getData ( et_query_url );
+            let testData = await getData ( et_query_url );
 
             if (testData) {
 
@@ -132,11 +131,14 @@ const noParens = (i, link) => {
             && link.children[1].children[0].data
             && link.children[1].children[0].data == "Availability"
             && link.children.length > 3
-            && link.children[3].data.includes("spaces")
-            && !(link.children[3].children
+            && link.children[3].data
+            && link.children[3].data.includes ( "spaces" )
+            && !(
+                link.children[3].children
                 && link.children[3].children.length > 0
                 && link.children[3].children[0].data
-                && !link.children[3].children[0].data.includes ( "Full" ))
+                && !link.children[3].children[0].data.includes ( "Full" )
+            )
         ) {
             return true;
         } else {
@@ -149,41 +151,42 @@ const noParens = (i, link) => {
 
 async function getData (et_query_url) {
     try {
-        const time_blocks = [];
+        const time_blocks = {};
         const dayAvailability = {};
         const totalAvailability = {};
         const dates = dateHelper.getNextThreeDates ();
         for (let date of dates) {
 
-            const form = new formData ();
-            for (let key in options.form) {
-                form.append ( key, options.form[key] )
-            }
-            form.append('show_date', date);
+            let formInfo = {...options.form};
+            formInfo['show_date'] = date;
 
-            // form.submit({
-            //     host: et_query_host,
-            //     path: et_query_path,
-            //     headers: header
-            // }, function(err, res) {
-            //     console.log(res.statusCode);
-            // });
+            // const form = new formData (formInfo);
+            const form = new formData ();
+            for (let key in formInfo) {
+                form.append ( key, formInfo[key] )
+            }
+            // form.append('show_date', date);
             const response = await got.post ( et_query_url, {
                 body: form,
                 headers: options['headers']
             } ).json ();
-            // console.log ( response );
             const $ = cheerio.load ( response["event_list_html"] );
 
             $ ( '#offering-page-select-events-table .offering-page-schedule-list-time-column' ).each ( function () {
-                time_blocks.push ( $ ( this ).text ().trim () );
+                if(!time_blocks[date]){
+                    time_blocks[date] = [];
+                }
+                time_blocks[date].push ( $ ( this ).text ().trim () );
             } );
             $ ( 'td' ).filter ( noParens ).each ( (i, link) => {
-                dayAvailability[time_blocks[i]] = link.children[3].data.replace ( "spaces", "" ).trim ()
+                if(!totalAvailability[date]){
+                    totalAvailability[date] = {};
+                }
+                totalAvailability[date][time_blocks[date][i]] = link.children[3].data.replace ( "spaces", "" ).trim ()
             } )
-            if ( dayAvailability.length > 0 ){
-                totalAvailability[date] = dayAvailability;
-            }
+            // if (Object.keys(dayAvailability).length !== 0) {
+            //     totalAvailability[date] = dayAvailability;
+            // }
         }
         return totalAvailability;
     } catch (error) {
@@ -192,7 +195,7 @@ async function getData (et_query_url) {
     }
 }
 
-setInterval ( checkForOpenSlots, 15000 );
+setInterval ( checkForOpenSlots, 30000 );
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );
