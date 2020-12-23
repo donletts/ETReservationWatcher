@@ -121,11 +121,9 @@ function checkForOpenSlots () {
 const isNotAvailabileYet = (i, link) => {
     try {
         if (link.children
-            && link.children.length > 2
-            && link.children[1].children
-            && link.children[1].children.length > 0
-            && link.children[1].children[0].data
-            && link.children[1].children[0].data.includes ( "NOT" )) {
+            && link.children.length > 0
+            && link.children[0].data
+            && link.children[0].data.includes ( "NOT" )) {
             return true;
         } else {
             return false;
@@ -216,7 +214,7 @@ async function getData (et_query_url) {
                     totalAvailability[date][time_blocks[date][i]] = link.children[3].data.replace ( "spaces", "" ).replace("space", "").trim ()
                 }
             } )
-            $ ( 'td' ).each ( (i, link) => {
+            $ ( '.offering-page-call-for-booking' ).each ( (i, link) => {
                 if(isNotAvailabileYet(i, link)){
                     if (totalAvailability[date]
                         && time_blocks[date]
@@ -246,7 +244,7 @@ async function getData (et_query_url) {
 }
 
 // checkForOpenSlots every 5 minutes (5 * 60 * 1000 = 300000 milliseconds)
-setInterval ( checkForOpenSlots, 300000 );
+setInterval ( checkForOpenSlots, 1000 );
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );
