@@ -244,7 +244,7 @@ async function getData (et_query_url) {
 }
 
 // checkForOpenSlots every 5 minutes (5 * 60 * 1000 = 300000 milliseconds)
-setInterval ( checkForOpenSlots, 1000 );
+setInterval ( checkForOpenSlots, 300000 );
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );
