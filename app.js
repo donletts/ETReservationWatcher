@@ -135,7 +135,7 @@ const isNotAvailabileYet = (i, link) => {
     }
 }
 
-const isAvailabilityTable = (i, link) => {
+const isAvailable = (i, link) => {
     try {
         if (link.children
             && link.children.length > 1
@@ -145,13 +145,33 @@ const isAvailabilityTable = (i, link) => {
             && link.children[1].children[0].data == "Availability"
             && link.children.length > 3
             && link.children[3].data
-            && link.children[3].data.includes ( "spaces" )
+            && (
+                link.children[3].data.includes ( "spaces" )
+                || link.children[3].data.includes ( "space" )
+            )
             && !(
                 link.children[3].children
                 && link.children[3].children.length > 0
                 && link.children[3].children[0].data
                 && link.children[3].children[0].data.includes ( "Full" )
             )
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (e) {
+        console.log ( e );
+    }
+}
+const isAvailabilityTable = (i, link) => {
+    try {
+        if (link.children
+            && link.children.length > 1
+            && link.children[1].children
+            && link.children[1].children.length > 0
+            && link.children[1].children[0].data
+            && link.children[1].children[0].data == "Availability"
         ) {
             return true;
         } else {
@@ -188,19 +208,23 @@ async function getData (et_query_url) {
                 }
                 time_blocks[date].push ( $ ( this ).text ().trim () );
             } );
-            $ ( 'td' ).filter ( isAvailabilityTable ).each ( (i, link) => {
-                if (!totalAvailability[date]) {
-                    totalAvailability[date] = {};
+            $ ( 'td' ).filter(isAvailabilityTable).each ( (i, link) => {
+                if(isAvailable(i, link)){
+                    if (!totalAvailability[date]) {
+                        totalAvailability[date] = {};
+                    }
+                    totalAvailability[date][time_blocks[date][i]] = link.children[3].data.replace ( "spaces", "" ).replace("space", "").trim ()
                 }
-                totalAvailability[date][time_blocks[date][i]] = link.children[3].data.replace ( "spaces", "" ).trim ()
             } )
-            $ ( 'td' ).filter ( isNotAvailabileYet ).each ( (i, link) => {
-                if (totalAvailability[date]
-                    && time_blocks[date]
-                    && time_blocks[date][i]
-                    && totalAvailability[date][time_blocks[date][i]]
-                ) {
-                    delete totalAvailability[date][time_blocks[date][i]];
+            $ ( 'td' ).each ( (i, link) => {
+                if(isNotAvailabileYet(i, link)){
+                    if (totalAvailability[date]
+                        && time_blocks[date]
+                        && time_blocks[date][i]
+                        && totalAvailability[date][time_blocks[date][i]]
+                    ) {
+                        delete totalAvailability[date][time_blocks[date][i]];
+                    }
                 }
             } )
         }
