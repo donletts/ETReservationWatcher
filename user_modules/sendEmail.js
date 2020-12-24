@@ -13,6 +13,21 @@ exports.getCredentials = function (credential_file, token_file) {
     return {refresh_token, client_secret, client_id, redirect_uris};
 }
 
+exports.getEnvCredentials = () => {
+    if (process.env.REFRESH_TOKEN
+        && process.env.CLIENT_SECRET
+        && process.env.CLIENT_ID
+        && process.env.REDIRECT_URI) {
+        const refresh_token = process.env.REFRESH_TOKEN;
+        const client_secret = process.env.CLIENT_SECRET;
+        const client_id = process.env.CLIENT_ID;
+        const redirect_uris = process.env.REDIRECT_URI;
+        return {refresh_token, client_secret, client_id, redirect_uris};
+    } else {
+        return undefined;
+    }
+}
+
 exports.setupAuth = function (credentials) {
     const {
         refresh_token, client_secret, client_id, redirect_uris

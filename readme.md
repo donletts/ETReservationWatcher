@@ -1,3 +1,8 @@
+To Run:
+- Need to pass in location of .env
+- Ex: node -r dotenv/config app.js dotenv_config_path=./secrets/.env
+
+
 Getting set up with gmail auth tokens
 
 https://console.cloud.google.com/apis
