@@ -108,6 +108,7 @@ function checkForOpenSlots () {
                     subject: 'Current 3 Day ET Availability',
                     text: availabilityString
                 }
+                // refresh token generated 11:52am 2020-12-23
                 const credentials = mailSender.getCredentials ( 'secrets/credentials.json', 'secrets/token.json' );
                 const oAuth2Client = mailSender.setupAuth ( credentials );
                 mailSender.sendMail ( mailOptions, credentials, oAuth2Client )
@@ -243,8 +244,8 @@ async function getData (et_query_url) {
     }
 }
 
-// checkForOpenSlots every 5 minutes (5 * 60 * 1000 = 300000 milliseconds)
-setInterval ( checkForOpenSlots, 300000 );
+// checkForOpenSlots every 10 minutes (10 * 60 * 1000 = 600000 milliseconds)
+setInterval ( checkForOpenSlots, 600000 );
 
 app.listen ( process.env.PORT || port, function () {
     console.log ( "listening on port " + port );
