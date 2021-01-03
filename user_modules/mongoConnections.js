@@ -24,20 +24,22 @@ mongoose.connect (
 );
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () =>{
-    console.log ("we're connected");
-});
+db.on ( 'error', console.error.bind ( console, 'connection error:' ) );
+db.once ( 'open', () => {
+    console.log ( "we're connected" );
+} );
 
 const gym_schema = new mongoose.Schema ( {
+    region: String,
+    brand: String,
     name: String,
     guid: String,
-    email_addresses: [mongoose.Schema.Types.ObjectId]
+    email_addresses: [{type: mongoose.Schema.Types.ObjectId, ref: 'email_address_item'}]
 } );
 
 const email_addresses_schema = new mongoose.Schema ( {
     email_address: String,
-    gyms: [mongoose.Schema.Types.ObjectId]
+    gyms: [{type: mongoose.Schema.Types.ObjectId, ref: 'gym'}]
 } );
 
 // NOTA BENE:
@@ -53,8 +55,61 @@ const email_addresses_schema = new mongoose.Schema ( {
 //          var collectionName = 'actor'
 //          var M = mongoose.model('Actor', schema, collectionName)
 
-const gym_model = mongoose.model ( "gym", gym_schema);
-const email_address_model = mongoose.model ( "email_address_item", email_addresses_schema, "email_addresses");
+const gym_model = mongoose.model ( "gym", gym_schema );
+const email_address_model = mongoose.model ( "email_address_item", email_addresses_schema, "email_addresses" );
+
+exports.get_all_gyms = async function () {
+    const all_gyms = await gym_model.aggregate (
+        [
+            // stage 1
+            {
+                $group: {
+                    _id: {
+                        region: "$region",
+                        brand: "$brand"
+                    },
+                    names: {
+                        $addToSet: {
+                            name: "$name"
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.region",
+                    brands: {
+                        $addToSet: {
+                            brand: "$_id.brand",
+                            names: "$names"
+                        }
+                    }
+                }
+            },
+            {
+                $project:{
+                    _id: 0,
+                    region: "$_id",
+                    brands: 1
+                }
+            },
+            {$sort: {region: 1}}
+        ] ).exec ();
+
+    return all_gyms;
+}
+
+exports.get_emails_for_gym_name = async function (gym_name) {
+    // const gyms = await gym_model.find ().lean ().exec ();
+    // console.log ( gyms );
+    const gym_query = await gym_model.findOne ( {name: {$eq: gym_name}} ).populate ( 'email_addresses' ).exec ();
+    const email_addresses = gym_query.email_addresses;
+    let ea = [];
+    for (let i = 0; i < email_addresses.length; i++) {
+        ea[i] = email_addresses[i].email_address;
+    }
+    return ea;
+}
 
 exports.gym_model = gym_model;
 exports.email_address_model = email_address_model;
