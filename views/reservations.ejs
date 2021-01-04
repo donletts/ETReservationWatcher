@@ -3,15 +3,20 @@
 <form action="/" method="post">
     <label for="dateInput">Date To Watch: </label>
     <input id="dateInput" type="date" name="dateToWatch">
-    <label for="cars">Choose a car:</label>
+    <label for="gyms">Choose a gym:</label>
     <select name="gym_name" id="gym_name">
-        <optgroup label="Earth Treks">
-            <option value="golden">Golden</option>
-            <option value="hamden">Hamden</option>
-        </optgroup>
-        <optgroup label="Evo">
-            <option value="louisville">Louisville</option>
-        </optgroup>
+        <% for(let i = 0; i < all_gyms.length; i++){ %>
+            <optgroup label="<%= all_gyms[i].region %>"></optgroup>
+            <% let brands = all_gyms[i].brands; %>
+            <% for(let j = 0; j < brands.length; j++){ %>
+                <optgroup label="<%= brands[j].brand %>">
+                    <% let names = brands[j].names; %>
+                    <% for(let k = 0; k < names.length; k++){ %>
+                        <option value="<%= names[k].name %>"><%= names[k].name %></option>
+                    <% } %>
+                </optgroup>
+            <% } %>
+        <% } %>
     </select>
     <button type="submit">Go</button>
 </form>

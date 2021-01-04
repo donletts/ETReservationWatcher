@@ -10,6 +10,7 @@ const cheerio = require ( "cheerio" );
 const got = require ( "got" );
 const formData = require ( 'form-data' );
 const ejs = require ( 'ejs' );
+const path = require ( 'path' );
 // local imports
 const mailSender = require ( __dirname + "/user_modules/sendEmail.js" );
 const dateHelper = require ( __dirname + "/user_modules/date.js" );
@@ -42,11 +43,14 @@ const port = 3000;
 
 app.set ( 'view engine', 'ejs' );
 app.use ( bodyParser.urlencoded ( {extended: true} ) );
+app.use ( express.static ( path.join(__dirname,"public") ) );
 
 var reservationData = {date_label: "", event_list_html: ""}
 
 app.get ( "/", function (req, res) {
-    res.render ( "reservations", {reservationData: reservationData} );
+    get_all_gyms().then((all_gyms) => {
+        res.render ( "reservations", {all_gyms: all_gyms, reservationData: reservationData} );
+    });
 } );
 
 

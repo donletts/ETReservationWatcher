@@ -1,5 +1,6 @@
 // mongo db
 const mongoose = require ( 'mongoose' );
+const helper_functions = require (__dirname + '/user_modules/helper_functions.js' );
 
 const dbname = process.env.DB_NAME
 const password = process.env.DB_PASSWORD
